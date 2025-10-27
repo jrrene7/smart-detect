@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "clarifai": "^2.9.1",
+    "dotenv": "^17.2.3",
     "particles-bg": "^2.5.5",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
