@@ -10,64 +10,25 @@ import Logo from "./components/Logo/Logo";
 import ImageLinkForm from "./components/ImageLinkForm/ImageLinkForm";
 import Rank from "./components/Rank/Rank";
 
-// Change thus to whatever model want to use:
-const MODEL_ID = "face-detection";
-
-const returnClarifaiRequestOptions = (imageUrl) => {
-  // Your PAT (Personal Access Token) can be found in Clarifai's Account Security section
-  const PAT ="f2b87982e51b4c94b8c227d6ede48dd";
-  // You can keep the 'clarifai'/'main' without changing it to your own unless you want to.
-  // This will use the public Clarifai model so you dont need to create an app:
-  const USER_ID = "jrrene7";
-  const APP_ID = "smart-detect";
-
-  const IMAGE_URL = imageUrl;
-
-  const raw = JSON.stringify({
-    user_app_id: {
-      user_id: USER_ID,
-      app_id: APP_ID,
-    },
-    inputs: [
-      {
-        data: {
-          image: {
-            url: IMAGE_URL,
-          },
-        },
-      },
-    ],
-  });
-
-  return {
-    method: "POST",
-    headers: {
-      "Accept": "application/json", // Indicate expected response type
-      "Authorization": "Key " + PAT, // Your Clarifai API key or PAT [4]
-      "Content-Type": "application/json",
-      "Access-Control-Allow-Origin": "http://localhost:5173" // Correct content type for JSON body
-    },
-    body: raw,
-  };
-};
+const getInitialState = () => ({
+  input: "",
+  imageUrl: "",
+  box: {},
+  route: "signin",
+  isSignedIn: false,
+  user: {
+    id: "",
+    name: "",
+    email: "",
+    entries: 0,
+    joined: "",
+  },
+});
 
 class App extends Component {
   constructor() {
     super();
-    this.state = {
-      input: "",
-      imageUrl: "",
-      box: {},
-      route: "signin",
-      isSignedIn: false,
-      user: {
-        id: "",
-        name: "",
-        email: "",
-        entries: 0,
-        joined: "",
-      },
-    };
+    this.state = getInitialState();
   }
 
   loadUser = (data) => {
@@ -179,11 +140,16 @@ class App extends Component {
 
   onRouteChange = (route) => {
     if (route === "signout") {
-      this.setState({ isSignedIn: false });
-    } else if (route === "home") {
-      this.setState({ isSignedIn: true });
+      this.setState(getInitialState());
+      return;
     }
-    this.setState({ route: route });
+
+    if (route === "home") {
+      this.setState({ isSignedIn: true, route: "home" });
+      return;
+    }
+
+    this.setState({ route, isSignedIn: false });
   };
 
   render() {
